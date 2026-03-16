@@ -346,6 +346,134 @@ Collapsible content sections. Both `heading` and `content` accept HTML:
 }
 ```
 
+#### Blockquotes
+
+```json
+{
+  "type": "extended-quote",
+  "children": [
+    {
+      "type": "extended-text",
+      "text": "Quoted text goes here.",
+      "format": 0,
+      "detail": 0,
+      "mode": "normal",
+      "style": "",
+      "version": 1
+    }
+  ],
+  "direction": "ltr",
+  "format": "",
+  "indent": 0,
+  "version": 1
+}
+```
+
+A container node like paragraphs — children can include `extended-text` and `link` nodes with mixed formatting.
+
+#### Aside
+
+A styled tangent or editorial aside:
+
+```json
+{
+  "type": "aside",
+  "children": [
+    {
+      "type": "extended-text",
+      "text": "An editorial tangent or side note.",
+      "format": 0,
+      "detail": 0,
+      "mode": "normal",
+      "style": "",
+      "version": 1
+    }
+  ],
+  "direction": "ltr",
+  "format": "",
+  "indent": 0,
+  "version": 1
+}
+```
+
+Same structure as a paragraph but rendered with distinct visual styling.
+
+#### Callout Cards
+
+Highlighted callout boxes with optional emoji and background color. The `calloutText` field accepts HTML:
+
+```json
+{
+  "type": "callout",
+  "version": 1,
+  "calloutText": "<p><strong>Note</strong> — This is important context.</p>",
+  "calloutEmoji": "",
+  "backgroundColor": "grey"
+}
+```
+
+`backgroundColor` options include: `grey`, `white`, `blue`, `green`, `yellow`, `red`, `pink`, `purple`, and `accent`.
+
+#### Embed Cards
+
+oEmbed content (YouTube, Twitter, etc.). Ghost fetches the embed metadata from the URL:
+
+```json
+{
+  "type": "embed",
+  "version": 1,
+  "url": "https://www.youtube.com/watch?v=VIDEO_ID",
+  "embedType": "video",
+  "html": "<iframe ...></iframe>",
+  "metadata": {
+    "title": "Video Title",
+    "author_name": "Channel Name",
+    "author_url": "https://www.youtube.com/@channel",
+    "type": "video",
+    "height": 113,
+    "width": 200,
+    "version": "1.0",
+    "provider_name": "YouTube",
+    "provider_url": "https://www.youtube.com/",
+    "thumbnail_height": 360,
+    "thumbnail_width": 480,
+    "thumbnail_url": "https://i.ytimg.com/vi/VIDEO_ID/hqdefault.jpg",
+    "html": "<iframe ...></iframe>"
+  },
+  "caption": ""
+}
+```
+
+When creating embeds, provide the `url` and `embedType` at minimum — Ghost enriches the metadata.
+
+#### HTML Cards
+
+Raw HTML injection with optional visibility controls for member segmentation:
+
+```json
+{
+  "type": "html",
+  "version": 1,
+  "html": "<div>Custom HTML content here</div>",
+  "visibility": {
+    "web": {
+      "nonMember": true,
+      "memberSegment": "status:free,status:-free"
+    },
+    "email": {
+      "memberSegment": "status:free,status:-free"
+    }
+  }
+}
+```
+
+The `visibility` field is optional. When present, it controls who sees the content:
+
+- `web.nonMember` — whether non-members see this block on the website
+- `web.memberSegment` / `email.memberSegment` — NQL segment filter (e.g., `status:free` for free members, `status:-free` for paid members)
+
+If `visibility` is omitted, the HTML block is shown to everyone.
+
 #### Line Breaks (Horizontal Rules)
 
 ```json
@@ -357,7 +485,7 @@ Collapsible content sections. Both `heading` and `content` accept HTML:
 
 ### Required Fields Checklist
 
-Every container node (paragraph, heading, list, listitem) requires all of these:
+Every container node (paragraph, heading, list, listitem, extended-quote, aside) requires all of these:
 
 - `type` — node type identifier
 - `version` — always `1`
@@ -376,7 +504,7 @@ Every `extended-text` node requires:
 - `style` — `""`
 - `version` — `1`
 
-Card nodes (image, codeblock, bookmark, signup, toggle, linebreak) are simpler — they require `type`, `version`, and their specific fields.
+Card nodes (image, codeblock, bookmark, signup, toggle, callout, embed, html, linebreak) are simpler — they require `type`, `version`, and their specific fields.
 
 ## Content Construction Patterns
 
@@ -401,12 +529,15 @@ A well-formed blog post typically follows this node sequence in `root.children`:
 1. Opening paragraph(s) — hook and context
 2. `extended-heading` (h2) — first section
 3. Paragraphs with mixed formatting and links
-4. `list` nodes for enumerations
-5. `image` or `codeblock` nodes as needed
-6. `linebreak` between major sections
-7. More h2/h3 sections as needed
-8. Closing paragraph(s)
-9. Optional `signup` card at the end
+4. `extended-quote` for blockquotes, `aside` for editorial tangents
+5. `list` nodes for enumerations
+6. `image`, `embed`, or `codeblock` nodes as needed
+7. `callout` cards for highlighted notes or warnings
+8. `linebreak` between major sections
+9. More h2/h3 sections as needed
+10. Closing paragraph(s)
+11. Optional `html` card for author bio or custom blocks (with visibility controls)
+12. Optional `signup` card at the end
 
 ## NQL Filter Reference
 
