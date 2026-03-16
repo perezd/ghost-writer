@@ -14,8 +14,20 @@ This plugin connects directly to a Ghost CMS instance through the `ghost-mcp` MC
 
 The ghost-mcp server must be installed and authenticated before the plugin can function:
 
-2. Authenticate: `bunx @perezd/ghost-mcp auth` (requires Ghost site URL and Admin API key)
-3. The plugin's `.mcp.json` is pre-configured to launch the server via `bunx @perezd/ghost-mcp serve`
+1. Authenticate: `bunx @perezd/ghost-mcp auth` (requires Ghost site URL and Admin API key)
+2. Configure MCP server definition for your Claude instance, like so:
+
+```json
+"mcpServers": {
+    "ghost": {
+        "command": "bunx",
+        "args": ["@perezd/ghost-mcp", "serve"],
+      "env": {
+        "GHOST_MCP_CONFIG": "$HOME/.ghost-mcp/config.json"
+      }
+    }
+}
+```
 
 ## Tools provided
 

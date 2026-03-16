@@ -1,3 +1,4 @@
 .DS_Store
 .mcpb-cache/
 node_modules/
+ghost-writer.plugin
