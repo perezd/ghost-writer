@@ -4,11 +4,12 @@ A Claude Cowork plugin for drafting and managing blog posts on [Ghost CMS](https
 
 ## Prerequisites
 
-This plugin requires the [@perezd/ghost-mcp](https://www.npmjs.com/package/@perezd/ghost-mcp) server to be installed and authenticated:
+You'll need to ensure [Bun](https://bun.com) is installed locally, it's neccessary to run the MCP server locally.
+
+Additionally, this plugin requires the [@perezd/ghost-mcp](https://www.npmjs.com/package/@perezd/ghost-mcp) server to be installed and authenticated:
 
 ```bash
-bun install -g @perezd/ghost-mcp
-ghost-mcp auth
+bunx @perezd/ghost-mcp auth
 ```
 
 The `auth` command will prompt you for your Ghost site URL and Admin API key (found in Ghost Admin → Settings → Integrations).

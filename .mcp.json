@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "ghost": {
-      "command": "ghost-mcp",
-      "args": ["serve"]
+      "command": "bunx",
+      "args": ["@perezd/ghost-mcp", "serve"]
     }
   }
 }
