@@ -12,7 +12,7 @@ description: >
 
 This skill teaches you how to construct valid Ghost Lexical JSON documents and interact with a Ghost blog through the ghost-mcp server tools.
 
-> **Prerequisites**: The ghost-mcp server must be configured and running. If MCP tools are unavailable, remind the user to run `ghost-mcp auth` to set up their Ghost site URL and Admin API key, then ensure the server is started with `ghost-mcp serve`.
+> **Prerequisites**: The ghost-mcp server must be configured and running. If MCP tools are unavailable, remind the user to run `bunx @perezd/ghost-mcp auth` to set up their Ghost site URL and Admin API key.
 
 ## MCP Tools Reference
 
