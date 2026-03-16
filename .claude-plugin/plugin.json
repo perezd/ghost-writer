@@ -1,0 +1,8 @@
+{
+  "name": "ghost-writer",
+  "version": "0.1.0",
+  "description": "Draft and manage blog posts on Ghost CMS using Lexical format",
+  "author": {
+    "name": "Derek Perez"
+  }
+}

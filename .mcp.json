@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "ghost": {
+      "command": "ghost-mcp",
+      "args": ["serve"]
+    }
+  }
+}
