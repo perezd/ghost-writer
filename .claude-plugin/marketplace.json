@@ -1,0 +1,20 @@
+{
+  "name": "ghost-writer",
+  "owner": {
+    "name": "Derek Perez"
+  },
+  "metadata": {
+    "description": "Draft and manage blog posts on Ghost CMS using Lexical format",
+    "version": "0.1.0",
+    "pluginRoot": "."
+  },
+  "plugins": [
+    {
+      "name": "ghost-writer",
+      "source": ".",
+      "description": "Draft and manage blog posts on Ghost CMS using Lexical format",
+      "version": "0.1.0",
+      "keywords": ["ghost", "blog", "cms", "lexical", "writing"]
+    }
+  ]
+}
