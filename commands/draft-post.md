@@ -17,6 +17,7 @@ Gather from the user through conversation:
 - **Key points** — any specific points, arguments, or structure the user wants
 - **Tags** — categories or tags for the post (optional)
 - **Tone/audience** — who this is for and what voice to use (optional)
+- **Excerpt** — a short summary/teaser for social cards and SEO (optional, can be drafted automatically)
 
 ## Process
 
@@ -36,5 +37,6 @@ Gather from the user through conversation:
 
 - Always create as `status: "draft"` — never publish directly from this command
 - If the user provides a link to reference content, use Chrome MCP to read it first
-- For long posts, build the Lexical document incrementally to avoid errors
+- For long posts with large Lexical documents (30K+ chars), use the two-step strategy: create with just title/tags/excerpt first, then `update_post` with the full lexical content
+- Set `custom_excerpt` to provide a compelling summary for social sharing and SEO — aim for under 300 characters
 - Ensure all Lexical nodes include required fields (see skill checklist)

@@ -14,7 +14,7 @@ When the user runs `/edit-post` or asks to modify, update, revise, or edit an ex
 Gather from the user:
 
 - **Post identifier** — title, slug, or ID of the post to edit
-- **Changes requested** — what to add, remove, rewrite, or restructure
+- **Changes requested** — what to add, remove, rewrite, or restructure (content, tags, excerpt, etc.)
 
 ## Process
 
@@ -36,5 +36,7 @@ Gather from the user:
 
 - Always fetch the latest `updated_at` immediately before calling `update_post` to avoid collision errors
 - If updating tags, remember that the `tags` parameter **replaces** all existing tags — include the ones you want to keep
+- If updating `custom_excerpt`, it also **replaces** the existing excerpt entirely
+- The `lexical` field on `update_post` is a full replacement — there is no partial update or append mode. Always send the complete document.
 - When restructuring content, preserve existing Lexical node formatting
 - For large edits, describe the planned changes to the user before applying them

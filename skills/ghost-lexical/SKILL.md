@@ -55,8 +55,70 @@ Create a new post. Defaults to draft status.
 - `lexical` (string, optional) — Content as a JSON string of a Lexical document. Must be `JSON.stringify()`'d.
 - `status` (enum: `draft` | `published` | `scheduled`, default `draft`) — Post status
 - `tags` (string[], optional) — Tag names to assign. Tags are created automatically if they don't exist.
+- `custom_excerpt` (string, optional) — A short summary/teaser for the post. Displayed in post lists, social cards, and SEO previews. Max 300 characters recommended.
 
 **Important:** The `lexical` value must be a JSON *string*, not a raw object. Always wrap the Lexical document with `JSON.stringify()`.
+
+**Large document strategy:** If the Lexical JSON is very large (e.g., 30K+ characters for a long-form article), the MCP tool call may hit parameter size limits. In that case, use a two-step approach:
+
+1. Call `create_post` with just the title, tags, status, and custom_excerpt (no lexical)
+2. Call `update_post` with the post's `id`, `updated_at`, and the full `lexical` content
+
+This separates metadata from content and avoids oversized single calls.
+
+**Escape hatch — direct MCP server invocation:** If both `create_post` and `update_post` tool calls fail due to parameter size limits, you can invoke the ghost-mcp server directly via its stdio transport as a last resort. Write a small script that sends JSON-RPC messages to the server process:
+
+```typescript
+// Run with: bun run create-large-post.ts
+import jwt from "jsonwebtoken";
+
+// Or use the MCP stdio protocol directly:
+// 1. Spawn: bunx @perezd/ghost-mcp serve
+// 2. Send JSON-RPC initialize handshake
+// 3. Send notifications/initialized
+// 4. Send tools/call with your create_post or update_post arguments
+// 5. Read the JSON-RPC response from stdout
+
+// Alternatively, call the Ghost Admin API directly:
+const config = await Bun.file(
+  `${process.env.HOME}/.ghost-mcp/config.json`
+).json();
+const site = config.sites[config.default];
+const [id, secret] = site.apiKey.split(":");
+const token = jwt.sign({}, Buffer.from(secret, "hex"), {
+  keyid: id,
+  algorithm: "HS256",
+  expiresIn: "5m",
+  audience: "/admin/",
+});
+
+const lexical = await Bun.file("my-large-post.json").text();
+
+const res = await fetch(
+  `${config.default}/ghost/api/admin/posts/`,
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Ghost ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      posts: [
+        {
+          title: "My Post",
+          lexical: lexical,
+          status: "draft",
+          custom_excerpt: "My excerpt",
+        },
+      ],
+    }),
+  }
+);
+const data = await res.json();
+console.log(data.posts[0].id);
+```
+
+This bypasses MCP tool parameter limits entirely by going straight to the Ghost Admin API. Use the same JWT signing approach that ghost-mcp uses internally. This should only be necessary for exceptionally large documents.
 
 ### update_post
 
@@ -67,9 +129,10 @@ Modify an existing post. Requires `updated_at` for optimistic locking — Ghost 
 - `id` (string, required) — Post ID (24-char hex)
 - `updated_at` (string, required) — The current `updated_at` value from the post. Obtain this from `get_post` or `list_posts` immediately before updating.
 - `title` (string, optional) — New title
-- `lexical` (string, optional) — New content as Lexical JSON string
+- `lexical` (string, optional) — New content as Lexical JSON string. **Replaces** the entire document — there is no partial/append mode.
 - `status` (enum: `draft` | `published` | `scheduled`, optional) — New status
 - `tags` (string[], optional) — New tag names. **Replaces** all existing tags.
+- `custom_excerpt` (string, optional) — New excerpt text. **Replaces** the existing excerpt.
 
 **Collision detection workflow:**
 
